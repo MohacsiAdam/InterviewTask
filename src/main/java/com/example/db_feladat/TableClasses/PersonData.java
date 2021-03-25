@@ -15,7 +15,7 @@ public class PersonData {
   private String name;
 
   @Column(name = "data_of_birth")
-  private java.sql.Date dataOfBirht;
+  private java.sql.Date dataOfBirth;
 
   @Column(name = "country", length = 128)
   private String country;
@@ -39,12 +39,12 @@ public class PersonData {
     this.name = name;
   }
 
-  public Date getDataOfBirht() {
-    return dataOfBirht;
+  public Date getDataOfBirth() {
+    return dataOfBirth;
   }
 
-  public void setDataOfBirht(Date dataOfBirht) {
-    this.dataOfBirht = dataOfBirht;
+  public void setDataOfBirth(Date dataOfBirth) {
+    this.dataOfBirth = dataOfBirth;
   }
 
   public String getCountry() {

@@ -20,7 +20,6 @@ public class GetData {
         ResultSet resultSet = dbResultSet.getResultSet(statement);
         
         try {
-
             resultSet.beforeFirst();
             if(!resultSet.next()){
                 System.out.println("No cars found in database!");
