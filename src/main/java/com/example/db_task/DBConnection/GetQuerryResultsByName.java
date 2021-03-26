@@ -1,6 +1,5 @@
 package com.example.db_task.DBConnection;
 
-import com.example.db_task.CreateEmailResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

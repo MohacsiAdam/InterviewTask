@@ -1,6 +1,5 @@
 package com.example.db_task.DBConnection;
 
-import com.example.db_task.CreateEmailResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -31,13 +30,13 @@ public class GetConnection {
 
         return connection;
     } catch (SQLException throwable) {
-            //logger.error("SQL operation error during connection creation, loading stacktrace:"+ throwable.getMessage());
+            logger.error("SQL operation error during connection creation, loading stacktrace:"+ throwable.getMessage());
         } catch (InvalidPropertiesFormatException e) {
-            //logger.error("Invalid XML format error, loading stacktrace:"+ e.getMessage());
+            logger.error("Invalid XML format error, loading stacktrace:"+ e.getMessage());
         } catch (FileNotFoundException e) {
-            //logger.error("File not found error, loading stacktrace:"+ e.getMessage());
+            logger.error("File not found error, loading stacktrace:"+ e.getMessage());
         } catch (IOException e) {
-            //logger.error("I/O operation error, loading stacktrace:"+ e.getMessage());
+            logger.error("I/O operation error, loading stacktrace:"+ e.getMessage());
         }
         return null;
     }
