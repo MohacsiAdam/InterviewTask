@@ -1,4 +1,4 @@
-package com.example.db_feladat.TableClasses;
+package com.example.db_task.TableClasses;
 
 import javax.persistence.*;
 
@@ -7,7 +7,7 @@ import javax.persistence.*;
 public class EmailTemplates {
 
   @Id
-  @Column(name = "language_id", nullable = false)
+  @Column(name = "language_id")
   private int languageId;
 
   @Column(name = "text", length = 4000)

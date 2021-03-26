@@ -1,4 +1,4 @@
-package com.example.db_feladat.TableClasses;
+package com.example.db_task.TableClasses;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;

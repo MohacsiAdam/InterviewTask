@@ -1,4 +1,4 @@
-package com.example.db_feladat.TableClasses;
+package com.example.db_task.TableClasses;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -9,8 +9,16 @@ import javax.persistence.Table;
 @Table(name = "Cars")
 public class Cars {
 
+  public long getCarId() {
+    return carId;
+  }
+
+  public void setCarId(long carId) {
+    this.carId = carId;
+  }
+
   @Id
-  @Column(name = "car_id", nullable = false)
+  @Column(name = "car_id")
   private long carId;
 
   @Column(name = "brand", length = 32)
@@ -32,7 +40,7 @@ public class Cars {
   private int drivenDistance;
 
   @Column(name = "is_sent")
-  private int isSent;
+  private boolean isSent;
 
 
 }

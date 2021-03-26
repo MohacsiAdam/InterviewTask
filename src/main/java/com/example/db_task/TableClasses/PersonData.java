@@ -1,4 +1,4 @@
-package com.example.db_feladat.TableClasses;
+package com.example.db_task.TableClasses;
 
 import javax.persistence.*;
 import java.sql.Date;
@@ -8,7 +8,7 @@ import java.sql.Date;
 public class PersonData {
 
   @Id
-  @Column(name = "Person_id", nullable = false)
+  @Column(name = "Person_id")
   private int personId;
 
   @Column(name = "name", length = 128)
