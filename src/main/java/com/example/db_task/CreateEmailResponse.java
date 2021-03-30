@@ -1,10 +1,16 @@
 package com.example.db_task;
 
-import com.example.db_task.DBConnection.*;
+import com.example.db_task.DBConnection.ConnectionProvider;
+import com.example.db_task.DBConnection.GetQueryResultsByName;
+import com.example.db_task.DBConnection.NameInput;
+import com.example.db_task.DBConnection.StatementProvider;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.sql.*;
+import java.sql.Connection;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.Objects;
 
 public class CreateEmailResponse {
@@ -25,7 +31,7 @@ public class CreateEmailResponse {
             logger.error("Error calling Connection! "+throwable.getMessage());
         }
         Connection connection = Objects.requireNonNull(dbConnection).connection;
-        
+
         StatementProvider dbStatement = StatementProvider.getInstance(connection);
         Statement statement = dbStatement.statement;
 
@@ -41,6 +47,7 @@ public class CreateEmailResponse {
                 logger.info("No cars found under this name!");
             }
             else {
+
                 String[] messageParts = getMessageParts(resultSet);
 
                 String messagePersonData = getPersonMessagePart(resultSet, messageParts);
@@ -94,6 +101,9 @@ public class CreateEmailResponse {
             message = message.replace("<plateNumber>", resultSet.getString("plate_number"));
             message = message.replace("<drivenDistance>",Integer.toString(resultSet.getInt("driven_distance")));
             message = message.replace("<calculatedValue>",Integer.toString(resultSet.getInt("calculated_value")));
+            message = message.replace("<yearOfManufacture>",Integer.toString(resultSet.getInt("year_of_manufacture")));
+
+
 
             sb.append(message);
         } while (resultSet.next());

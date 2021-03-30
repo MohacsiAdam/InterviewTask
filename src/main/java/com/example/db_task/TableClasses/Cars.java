@@ -6,38 +6,102 @@ import javax.persistence.*;
 @Table(name = "Cars")
 public class Cars {
 
-  public long getCarId() {
-    return carId;
-  }
+  private int carId;
 
-  public void setCarId(long carId) {
-    this.carId = carId;
-  }
+  private String brand;
+
+  private String type;
+
+  private String plateNumber;
+
+  private int yearOfManufacture;
+
+  private int calculatedValue;
+
+  private int drivenDistance;
+
+  private boolean isSent;
 
   @Id
   @Column(name = "car_id")
-  private long carId;
+  @GeneratedValue(strategy = GenerationType.IDENTITY)
+  public int getCarId() {
+    return carId;
+  }
 
-  @Column(name = "brand", length = 32)
-  private String brand;
+  public void setCarId(int carId) {
+    this.carId = carId;
+  }
 
-  @Column(name = "type", length = 32)
-  private String type;
+  @Basic
+  @Column(name = "brand")
+  public String getBrand() {
+    return brand;
+  }
 
-  @Column(name = "plate_number", length = 16)
-  private String plateNumber;
 
+  public void setBrand(String brand) {
+    this.brand = brand;
+  }
+
+
+  @Basic
+  @Column(name = "type")
+  public String getType() {
+    return type;
+  }
+
+  public void setType(String type) {
+    this.type = type;
+  }
+
+  @Basic
+  @Column(name = "plate_number")
+  public String getPlateNumber() {
+    return plateNumber;
+  }
+
+  public void setPlateNumber(String plateNumber) {
+    this.plateNumber = plateNumber;
+  }
+
+  @Basic
   @Column(name = "year_of_manufacture")
-  private int yearOfManufacture;
+  public int getYearOfManufacture() {
+    return yearOfManufacture;
+  }
 
+  public void setYearOfManufacture(int yearOfManufacture) {
+    this.yearOfManufacture = yearOfManufacture;
+  }
+
+  @Basic
   @Column(name = "calculated_value")
-  private int calculatedValue;
+  public int getCalculatedValue() {
+    return calculatedValue;
+  }
 
+  public void setCalculatedValue(int calculatedValue) {
+    this.calculatedValue = calculatedValue;
+  }
+
+  @Basic
   @Column(name = "driven_distance")
-  private int drivenDistance;
+  public int getDrivenDistance() {
+    return drivenDistance;
+  }
 
+  public void setDrivenDistance(int drivenDistance) {
+    this.drivenDistance = drivenDistance;
+  }
+
+  @Basic
   @Column(name = "is_sent")
-  private boolean isSent;
+  public boolean isSent() {
+    return isSent;
+  }
 
-
+  public void setSent(boolean sent) {
+    isSent = sent;
+  }
 }

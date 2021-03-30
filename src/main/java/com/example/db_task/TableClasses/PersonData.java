@@ -23,43 +23,4 @@ public class PersonData {
   @Column(name = "language_id")
   private int languageId;
 
-  public long getPersonId() {
-    return personId;
-  }
-
-  public void setPersonId(int personId) {
-    this.personId = personId;
-  }
-
-  public String getName() {
-    return name;
-  }
-
-  public void setName(String name) {
-    this.name = name;
-  }
-
-  public Date getDataOfBirth() {
-    return dataOfBirth;
-  }
-
-  public void setDataOfBirth(Date dataOfBirth) {
-    this.dataOfBirth = dataOfBirth;
-  }
-
-  public String getCountry() {
-    return country;
-  }
-
-  public void setCountry(String country) {
-    this.country = country;
-  }
-
-  public long getLanguageId() {
-    return languageId;
-  }
-
-  public void setLanguageId(int languageId) {
-    this.languageId = languageId;
-  }
 }

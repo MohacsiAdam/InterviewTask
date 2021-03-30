@@ -8,47 +8,14 @@ import java.io.Serializable;
 @Embeddable
 public class CarsOfPeople implements Serializable {
 
-  @EmbeddedId
-  private CarsOfPeople id;
+  @Id
+  @Column(name = "person_id")
+  private int person_id;
 
-  @ManyToOne
-  @JoinColumn(name = "person_id")
-  public PersonData personData;
+  @Id
+  @Column(name = "car_id")
+  private int car_id;
 
-  @ManyToOne
-  @JoinColumn(name = "car_id")
-  public  Cars carData;
 
-  public CarsOfPeople(PersonData personData, Cars carData) {
-    this.personData = personData;
-    this.carData = carData;
-  }
 
-  public CarsOfPeople() {
-
-  }
-
-  public CarsOfPeople getId() {
-    return id;
-  }
-
-  public void setId(CarsOfPeople id) {
-    this.id = id;
-  }
-
-  public PersonData getPersonData() {
-    return personData;
-  }
-
-  public void setPersonData(PersonData personData) {
-    this.personData = personData;
-  }
-
-  public Cars getCarData() {
-    return carData;
-  }
-
-  public void setCarData(Cars carData) {
-    this.carData = carData;
-  }
 }

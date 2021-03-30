@@ -26,7 +26,7 @@ dependencies {
 // this is for mysql java connector
     implementation group: 'mysql', name: 'mysql-connector-java', version: '8.0.15'
 
-    implementation 'org.hibernate:hibernate-agroal:5.4.30.Final'
+    implementation 'org.hibernate:hibernate-core:5.4.30.Final'
 }
 
 test {
