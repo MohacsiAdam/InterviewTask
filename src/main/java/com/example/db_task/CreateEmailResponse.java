@@ -1,17 +1,19 @@
 package com.example.db_task;
 
-import com.example.db_task.DBConnection.ConnectionProvider;
-import com.example.db_task.DBConnection.GetQueryResultsByName;
 import com.example.db_task.DBConnection.NameInput;
-import com.example.db_task.DBConnection.StatementProvider;
+import com.example.db_task.Repositories.EmailTemplateRepositoryImpl;
+import com.example.db_task.Repositories.EmailTemplatesRepository;
+import com.example.db_task.Repositories.PersonRepository;
+import com.example.db_task.Repositories.PersonRepositoryImpl;
+import com.example.db_task.TableClasses.Cars;
+import com.example.db_task.TableClasses.PersonData;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.sql.Connection;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Statement;
-import java.util.Objects;
+import javax.persistence.NoResultException;
+import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class CreateEmailResponse {
 
@@ -24,130 +26,88 @@ public class CreateEmailResponse {
      */
     public void buildEmailResponse(){
 
-        ConnectionProvider dbConnection = null;
-        try {
-            dbConnection = ConnectionProvider.getInstance();
-        } catch (Throwable throwable) {
-            logger.error("Error calling Connection! "+throwable.getMessage());
-        }
-        Connection connection = Objects.requireNonNull(dbConnection).connection;
-
-        StatementProvider dbStatement = StatementProvider.getInstance(connection);
-        Statement statement = dbStatement.statement;
-
         NameInput nameInput = new NameInput();
         String inputName = nameInput.getNameFromUser();
 
-        GetQueryResultsByName dbResultSet = new GetQueryResultsByName();
-        ResultSet resultSet = dbResultSet.getPersonAndCarDataFromQuery(statement, inputName);
+        try{
+            //Get language_id from name
+            PersonRepository personRepository = new PersonRepositoryImpl();
+            int language_id = personRepository.getLanguageIdByName(inputName);
 
-        try {
-            resultSet.beforeFirst();
-            if(!resultSet.next()){
-                logger.info("No cars found under this name!");
-            }
-            else {
+            //Get mail template text from language_id
+            EmailTemplatesRepository emailTemplatesRepository = new EmailTemplateRepositoryImpl();
+            String responseEmail = emailTemplatesRepository.getTextById(language_id);
 
-                String[] messageParts = getMessageParts(resultSet);
+            //GetPersonData
+            PersonData personData = personRepository.getPersonByName(inputName);
 
-                String messagePersonData = getPersonMessagePart(resultSet, messageParts);
-                String messageCarData = getCarMessagePart(resultSet, messageParts);
+            //GetPerson's cars
+            List<Cars> carList = personRepository.getCarsByName(personData.getName());
 
-                String completeMessage = messagePersonData +
-                        messageCarData +
-                        messageParts[2];
-                System.out.println(completeMessage);
-            }
-        } catch (SQLException throwable) {
-          logger.error("SQL database error, loading stacktrace:"+ throwable.getMessage());
-        } finally {
-            if (resultSet != null) {
-                try {
-                    resultSet.close();
-               } catch (SQLException e) {
-                   logger.error("SQL database error during resultSet closing, loading stacktrace:"+ e.getMessage());
-                }
-            }
-            try {
-                statement.close();
-            } catch (SQLException e) {
-               logger.error("SQL database error during statement closing, loading stacktrace:"+ e.getMessage());
-            }
-            try {
-                 connection.close();
-             } catch (SQLException e) {
-               logger.error("SQL database error during connection closing, loading stacktrace:"+ e.getMessage());
-            }
+            StringBuilder sb = new StringBuilder();
+
+            //Regex to find message parts
+            Pattern pattern = Pattern.compile("^(?<person>(Dear|Kedves)([\\s\\S])+)(?<car>(Brand|Márka)([\\s\\S]+)(Euro.\\s\\s))(?<end>([\\s\\S]+))$");
+            Matcher matcher = pattern.matcher(responseEmail);
+
+            //Match with matcher to avoid IllegalStateException
+            matcher.matches();
+
+            //Compose person data part of message
+            String personPart = matcher.group("person");
+            sb.append(getPersonMessagePart(personPart, personData));
+
+            //Compose car data part of message
+            String carOriginal = matcher.group("car");
+            sb.append(getCarMessagePart(carOriginal, carList));
+
+            //Adding message ending
+            sb.append(matcher.group("end"));
+
+            logger.info("QUERY RESULT:\n"+sb.toString());
+        } catch (NoResultException e){
+            logger.error("No result found for query!");
         }
     }
 
     /**
      *
-     * @param resultSet The resultSet obtained with the querry
-     * @param messageParts The text of the email separated into 3 parts
+     * @param carOriginal The part of the e-mail response template that lists cars
+     * @param carList The list of cars owned by the requester
      * @return Returns the middle part of the email response with substituted car data for every car under the specified user
-     * @throws SQLException --database access errors
      */
-    private String getCarMessagePart(ResultSet resultSet, String[] messageParts) throws SQLException {
+    private String getCarMessagePart(String carOriginal, List<Cars> carList){
 
         StringBuilder sb = new StringBuilder();
 
-        resultSet.first();
-        do {
-            String message = messageParts[1];
-
-            message = message.replace("<brand>", resultSet.getString("brand"));
-            message = message.replace("<type>", resultSet.getString("type"));
-            message = message.replace("<plateNumber>", resultSet.getString("plate_number"));
-            message = message.replace("<drivenDistance>",Integer.toString(resultSet.getInt("driven_distance")));
-            message = message.replace("<calculatedValue>",Integer.toString(resultSet.getInt("calculated_value")));
-            message = message.replace("<yearOfManufacture>",Integer.toString(resultSet.getInt("year_of_manufacture")));
+        for(Cars car : carList){
+            String current = carOriginal;
+            current = current.replaceAll("<brand>",car.getBrand());
+            current = current.replaceAll("<type>",car.getType());
+            current = current.replaceAll("<plateNumber>",car.getPlateNumber());
+            current = current.replaceAll("<yearOfManufacture>", String.valueOf(car.getYearOfManufacture()));
+            current = current.replaceAll("<drivenDistance>", String.valueOf(car.getDrivenDistance()));
+            current = current.replaceAll("<calculatedValue>", String.valueOf(car.getCalculatedValue()));
 
 
-
-            sb.append(message);
-        } while (resultSet.next());
+            sb.append(current);
+        }
 
         return sb.toString();
     }
 
     /**
      *
-     * @param resultSet The resultSet obtained with the querry
-     * @param messageParts The text of the email separated into 3 parts
-     * @return A string that will contain the first part of the message filled in with actual Person data
-     * @throws SQLException --database access errors
+     * @param personMessagePart The part of the e-mail response template that lists cars
+     * @param personData The data of the requester
+     * @return A string containing personMessagePart with the substituted information
      */
-    private String getPersonMessagePart(ResultSet resultSet, String[] messageParts) throws SQLException {
+    private String getPersonMessagePart(String personMessagePart, PersonData personData) {
 
-        String message = messageParts[0];
-        message = message.replace("<name>", resultSet.getString("name"));
-        message = message.replace("<country>", resultSet.getString("country"));
-        message = message.replace("<dateOfBirth>", resultSet.getString("data_of_birth"));
+        personMessagePart = personMessagePart.replaceAll("<name>",personData.getName());
+        personMessagePart = personMessagePart.replaceAll("<country>",personData.getCountry());
+        personMessagePart = personMessagePart.replaceAll("<dateOfBirth>", String.valueOf(personData.getDataOfBirth()));
 
-        return message;
-    }
-
-    /**
-     *
-     * @param resultSet The resultSet obtained with the querry
-     * @return An array of 3 strings containing the following 3 sections of the template email message:
-     * 1) Welcoming message and personal information
-     * 2) Car information block
-     * 3) Letter ending
-     */
-    private String[] getMessageParts(ResultSet resultSet) {
-        String[] messageParts = new String[3];
-        String message;
-        
-        try {
-            message = resultSet.getString("text");
-            messageParts = message.split("(<carsLoopBegin>|<carsLoopEnd>)");
-        } catch (SQLException throwable) {
-            logger.error("Error during message part creation:" + throwable.getMessage());
-        }
-
-        return messageParts;
+        return personMessagePart;
     }
 }
-

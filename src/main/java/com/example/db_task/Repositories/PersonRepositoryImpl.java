@@ -18,12 +18,40 @@ public class PersonRepositoryImpl implements PersonRepository{
 
 
     @Override
+    public void create(PersonData personData) {
+        entityManager.persist(personData);
+    }
+
+    @Override
+    public void update(PersonData personData) {
+        entityManager.merge(personData);
+    }
+
+    @Override
+    public void delete(PersonData personData) {
+        entityManager.refresh(personData);
+    }
+
+    @Override
     public PersonData getPersonById(long id) {
         return entityManager.find(PersonData.class,id);
     }
 
     @Override
-    public List<Cars> getCarsByPerson(String name) {
+    public Integer getLanguageIdByName(String name) {
+        TypedQuery<Integer> returnId = entityManager.createQuery("SELECT languageId from PersonData WHERE name = '"+name+"'", Integer.class);
+        return returnId.getSingleResult();
+    }
+
+    @Override
+    public PersonData getPersonByName(String name) {
+        return (PersonData) entityManager.createQuery("select p FROM PersonData p where name= '"+name+"'").getSingleResult();
+    }
+
+    @Override
+    public List<Cars> getCarsByName(String name) {
+
+
 
         //Get Person ID from from name
         Object personIdQuery = entityManager

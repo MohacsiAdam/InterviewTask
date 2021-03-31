@@ -5,7 +5,6 @@ import java.io.Serializable;
 
 @Entity
 @Table(name = "Cars_of_people")
-@Embeddable
 public class CarsOfPeople implements Serializable {
 
   @Id
@@ -16,6 +15,11 @@ public class CarsOfPeople implements Serializable {
   @Column(name = "car_id")
   private int car_id;
 
+  @ManyToOne
+  @JoinColumn(name = "person_id")
+  private PersonData personData;
 
-
+  @ManyToOne
+  @JoinColumn(name = "car_id")
+  private Cars cars;
 }

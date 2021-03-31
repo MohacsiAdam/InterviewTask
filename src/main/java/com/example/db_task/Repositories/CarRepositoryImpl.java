@@ -18,7 +18,22 @@ public class CarRepositoryImpl implements CarRepository{
     static {entityManager = entityManagerFactory.createEntityManager();}
 
     @Override
-    public Cars getCarById(long id) {
+    public void create(Cars cars) {
+        entityManager.persist(cars);
+    }
+
+    @Override
+    public void update(Cars cars) {
+        entityManager.merge(cars);
+    }
+
+    @Override
+    public void delete(Cars cars) {
+        entityManager.remove(cars);
+    }
+
+    @Override
+    public Cars getCarById(int id) {
         return entityManager.find(Cars.class,id);
     }
 
