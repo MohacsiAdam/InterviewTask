@@ -2,6 +2,7 @@ package com.example.db_task.Repositories;
 
 import com.example.db_task.TableClasses.Cars;
 import com.example.db_task.TableClasses.PersonData;
+import org.hibernate.Session;
 
 import javax.persistence.*;
 import java.util.List;
@@ -65,6 +66,7 @@ public class PersonRepositoryImpl implements PersonRepository{
         //Get Car Parameters By Car IDs
         TypedQuery<Cars> carsTypedQuery = (entityManager.createQuery("SELECT c FROM Cars c WHERE c.carId IN (:ids)", Cars.class)
                 .setParameter("ids", carIds));
+
         return carsTypedQuery.getResultList();
     }
 

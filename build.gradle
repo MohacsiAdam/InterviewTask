@@ -1,6 +1,8 @@
 plugins {
     id 'java'
     id 'war'
+    id 'org.springframework.boot' version '2.4.4'
+    id 'io.spring.dependency-management' version '1.0.11.RELEASE'
 }
 
 group 'com.example'
@@ -16,17 +18,24 @@ ext {
 
 dependencies {
 
+    //slf4j logger
     implementation group: 'org.slf4j', name: 'slf4j-api', version: '2.0.0-alpha1'
     implementation group: 'org.slf4j', name: 'slf4j-log4j12', version: '2.0.0-alpha1'
+
+    //springboot
+    implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
+    implementation 'org.springframework.boot:spring-boot-starter-web'
+    testImplementation 'org.springframework.boot:spring-boot-starter-test'
 
 
     testImplementation("org.junit.jupiter:junit-jupiter-api:${junitVersion}")
     testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:${junitVersion}")
 
-// this is for mysql java connector
+    // this is for mysql java connector
     implementation group: 'mysql', name: 'mysql-connector-java', version: '8.0.15'
 
     implementation 'org.hibernate:hibernate-core:5.4.30.Final'
+
 }
 
 test {

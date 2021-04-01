@@ -22,6 +22,20 @@ public class Cars {
 
   private boolean isSent;
 
+  @Override
+  public String toString() {
+    return "Cars{" +
+            "carId=" + carId +
+            ", brand='" + brand + '\'' +
+            ", type='" + type + '\'' +
+            ", plateNumber='" + plateNumber + '\'' +
+            ", yearOfManufacture=" + yearOfManufacture +
+            ", calculatedValue=" + calculatedValue +
+            ", drivenDistance=" + drivenDistance +
+            ", isSent=" + isSent +
+            '}';
+  }
+
   @Id
   @Column(name = "car_id")
   @GeneratedValue(strategy = GenerationType.IDENTITY)

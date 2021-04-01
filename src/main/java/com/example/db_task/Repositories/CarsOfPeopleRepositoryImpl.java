@@ -1,19 +1,16 @@
 package com.example.db_task.Repositories;
 
 import com.example.db_task.TableClasses.CarsOfPeople;
-
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Repository;
 import javax.persistence.*;
 import java.util.List;
 
+@Repository
 public class CarsOfPeopleRepositoryImpl implements CarsOfPeopleRepository {
 
-    @PersistenceContext
-    public static EntityManagerFactory entityManagerFactory;
-    static {entityManagerFactory = Persistence.createEntityManagerFactory("db_task");}
-
-    @PersistenceContext
-    public static EntityManager entityManager;
-    static {entityManager = entityManagerFactory.createEntityManager();}
+    @Autowired
+    private EntityManager entityManager;
 
     @Override
     public void create(CarsOfPeople carsOfPeople) {
