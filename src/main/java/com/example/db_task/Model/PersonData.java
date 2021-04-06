@@ -1,4 +1,4 @@
-package com.example.db_task.TableClasses;
+package com.example.db_task.Model;
 
 import javax.persistence.*;
 import java.sql.Date;

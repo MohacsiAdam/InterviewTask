@@ -1,54 +1,71 @@
 package com.example.db_task;
 
 import com.example.db_task.DBConnection.NameInput;
-import com.example.db_task.Repositories.EmailTemplateRepositoryImpl;
-import com.example.db_task.Repositories.EmailTemplatesRepository;
-import com.example.db_task.Repositories.PersonRepository;
-import com.example.db_task.Repositories.PersonRepositoryImpl;
-import com.example.db_task.TableClasses.Cars;
-import com.example.db_task.TableClasses.PersonData;
+import com.example.db_task.Model.EmailTemplates;
+import com.example.db_task.Repositories.*;
+import com.example.db_task.Model.Cars;
+import com.example.db_task.Model.PersonData;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.boot.CommandLineRunner;
+import org.springframework.stereotype.Component;
 
-import javax.persistence.NoResultException;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-public class CreateEmailResponse {
+@Component
+public class CreateEmailResponse implements CommandLineRunner{
 
     /*Initialize class error logger*/
     Logger logger = LoggerFactory.getLogger(CreateEmailResponse.class);
+
+
+    //Add JPA Repositories
+    private final EmailCRUD emailCRUD;
+    private final PersonCRUD personCRUD;
+    private final CarCRUD carCRUD;
+    private final CarsOfPeopleCRUD carsOfPeopleCRUD;
+
+    public CreateEmailResponse(EmailCRUD emailCRUD, PersonCRUD personCRUD, CarCRUD carCRUD, CarsOfPeopleCRUD carsOfPeopleCRUD) {
+        this.emailCRUD = emailCRUD;
+        this.personCRUD = personCRUD;
+        this.carCRUD = carCRUD;
+        this.carsOfPeopleCRUD = carsOfPeopleCRUD;
+    }
 
     /**
      * The main method responsible for handling the creation of the full letter response
      * and to output the response to console
      */
-    public void buildEmailResponse(){
+    @Override
+    public void run(String... args){
 
         NameInput nameInput = new NameInput();
         String inputName = nameInput.getNameFromUser();
 
-        try{
-            //Get language_id from name
-            PersonRepository personRepository = new PersonRepositoryImpl();
-            int language_id = personRepository.getLanguageIdByName(inputName);
+        //Get Person from name
+        PersonData personData = personCRUD.getPersonDataByName(inputName);
 
-            //Get mail template text from language_id
-            EmailTemplatesRepository emailTemplatesRepository = new EmailTemplateRepositoryImpl();
-            String responseEmail = emailTemplatesRepository.getTextById(language_id);
+        //Get Email text from language_id
+        EmailTemplates responseEmail = emailCRUD.getTextByLanguageId(personData.getLanguageId());
 
-            //GetPersonData
-            PersonData personData = personRepository.getPersonByName(inputName);
+        //Get List of Car ids from person id
+        List<Integer> carIds = carsOfPeopleCRUD.getCarsByUserId(personData.getPersonId());
 
-            //GetPerson's cars
-            List<Cars> carList = personRepository.getCarsByName(personData.getName());
+        if(carIds.isEmpty()) {
+            logger.error("No cars found under this name!");
+        }
+        else {
+
+            //Get Cars from car ids
+            List<Cars> carList = carCRUD.getCarsByOwner(carIds);
 
             StringBuilder sb = new StringBuilder();
 
             //Regex to find message parts
             Pattern pattern = Pattern.compile("^(?<person>(Dear|Kedves)([\\s\\S])+)(?<car>(Brand|Márka)([\\s\\S]+)(Euro.\\s\\s))(?<end>([\\s\\S]+))$");
-            Matcher matcher = pattern.matcher(responseEmail);
+            Matcher matcher = pattern.matcher(responseEmail.getText());
 
             //Match with matcher to avoid IllegalStateException
             matcher.matches();
@@ -65,8 +82,7 @@ public class CreateEmailResponse {
             sb.append(matcher.group("end"));
 
             logger.info("QUERY RESULT:\n"+sb.toString());
-        } catch (NoResultException e){
-            logger.error("No result found for query!");
+
         }
     }
 

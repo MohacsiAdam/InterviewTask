@@ -1,6 +1,6 @@
 package com.example.db_task.Service;
 
-import com.example.db_task.TableClasses.Cars;
+import com.example.db_task.Model.Cars;
 
 public interface CarService {
 

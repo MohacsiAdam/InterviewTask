@@ -10,9 +10,6 @@ public class Db_taskApplication {
 
     public static void main(String[] args) {
         SpringApplication.run(Db_taskApplication.class, args);
-
-        CreateEmailResponse createEmailResponse = new CreateEmailResponse();
-        createEmailResponse.buildEmailResponse();
     }
 
 }

@@ -1,7 +1,7 @@
 package com.example.db_task.Service;
 
-import com.example.db_task.TableClasses.Cars;
-import com.example.db_task.TableClasses.PersonData;
+import com.example.db_task.Model.Cars;
+import com.example.db_task.Model.PersonData;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
